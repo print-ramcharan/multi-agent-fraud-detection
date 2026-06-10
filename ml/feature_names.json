@@ -1,0 +1,16 @@
+[
+  "amount",
+  "hour_of_day",
+  "day_of_week",
+  "is_online",
+  "merchant_risk",
+  "country_risk",
+  "customer_age_days",
+  "transaction_count_24h",
+  "amount_zscore",
+  "distance_from_home",
+  "device_age_days",
+  "is_new_device",
+  "distinct_merchants_24h",
+  "time_since_last_txn_hours"
+]

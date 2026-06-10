@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fraud Detection Command Center</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="chart.umd.min.js"></script>
+
+
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+  <header class="header">
+    <div class="header__left">
+      <div class="header__logo">
+        <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none">
+          <rect x="2" y="2" width="28" height="28" rx="6" stroke="url(#logo-grad)" stroke-width="2.5"/>
+          <path d="M10 16l4 4 8-8" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+        <div>
+          <h1 class="header__title">Fraud Detection Command Center</h1>
+          <p class="header__subtitle">Multi-Agent Real-Time Monitoring</p>
+        </div>
+      </div>
+    </div>
+    <div class="header__right">
+      <div class="header__clock" id="liveClock">--:--:--</div>
+      <div class="header__connection" id="connectionStatus">
+        <span class="connection-dot connection-dot--disconnected" id="connectionDot"></span>
+        <span class="connection-label" id="connectionLabel">Connecting…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════ KPI CARDS ═══════════════════════ -->
+  <section class="kpi-row" aria-label="Key Performance Indicators">
+    <article class="kpi-card" data-accent="blue">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Total Transactions</span>
+        <span class="kpi-card__value mono" id="kpiTotal">0</span>
+      </div>
+    </article>
+
+    <article class="kpi-card" data-accent="green">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Approval Rate</span>
+        <span class="kpi-card__value mono" id="kpiApproval">0<small>%</small></span>
+      </div>
+    </article>
+
+    <article class="kpi-card" data-accent="red">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Decline Rate</span>
+        <span class="kpi-card__value mono" id="kpiDecline">0<small>%</small></span>
+      </div>
+    </article>
+
+    <article class="kpi-card" data-accent="amber">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Escalation Rate</span>
+        <span class="kpi-card__value mono" id="kpiEscalation">0<small>%</small></span>
+      </div>
+    </article>
+
+    <article class="kpi-card" data-accent="purple">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Avg Latency</span>
+        <span class="kpi-card__value mono" id="kpiLatency">0<small>ms</small></span>
+      </div>
+    </article>
+
+    <article class="kpi-card" data-accent="critical">
+      <div class="kpi-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+      <div class="kpi-card__body">
+        <span class="kpi-card__label">Active Alerts</span>
+        <span class="kpi-card__value mono" id="kpiAlerts">0</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ═══════════════════════ MAIN GRID ═══════════════════════ -->
+  <main class="dashboard-grid">
+
+    <!-- ── Live Transaction Feed ── -->
+    <section class="panel panel--feed" aria-label="Live Transaction Feed">
+      <div class="panel__header">
+        <h2 class="panel__title">
+          <span class="panel__title-dot pulse-dot"></span>
+          Live Transaction Feed
+        </h2>
+        <span class="panel__badge mono" id="feedCount">0 txns</span>
+      </div>
+      <div class="panel__body feed-scroll" id="feedContainer">
+        <table class="feed-table" id="feedTable">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Transaction ID</th>
+              <th>Amount</th>
+              <th>Customer</th>
+              <th>Decision</th>
+              <th>Confidence</th>
+              <th>Latency</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="feedBody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+        <div class="feed-empty" id="feedEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="feed-empty__icon"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+          <p>Waiting for transactions…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Right Column ── -->
+    <div class="right-column">
+
+      <!-- Decision Distribution -->
+      <section class="panel panel--donut" aria-label="Decision Distribution">
+        <div class="panel__header">
+          <h2 class="panel__title">Decision Distribution</h2>
+        </div>
+        <div class="panel__body chart-wrap">
+          <canvas id="donutChart"></canvas>
+          <div class="donut-center" id="donutCenter">
+            <span class="donut-center__value mono" id="donutTotal">0</span>
+            <span class="donut-center__label">Total</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latency Monitor -->
+      <section class="panel panel--latency" aria-label="Latency Monitor">
+        <div class="panel__header">
+          <h2 class="panel__title">Latency Monitor</h2>
+          <span class="panel__badge panel__badge--sla">SLA 100ms</span>
+        </div>
+        <div class="panel__body chart-wrap chart-wrap--line">
+          <canvas id="latencyChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Agent Performance -->
+      <section class="panel panel--agents" aria-label="Agent Performance">
+        <div class="panel__header">
+          <h2 class="panel__title">Agent Performance</h2>
+        </div>
+        <div class="panel__body" id="agentHeatmap">
+          <!-- Heatmap grid injected by JS -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ═══════════════════════ BOTTOM ALERT BAR ═══════════════════════ -->
+  <footer class="alert-bar" aria-label="Risk Alerts">
+    <div class="alert-bar__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span>ALERTS</span>
+    </div>
+    <div class="alert-bar__ticker" id="alertTicker">
+      <div class="alert-bar__track" id="alertTrack">
+        <span class="alert-item">System online — monitoring active</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════ AGENT TRACE MODAL ═══════════════════════ -->
+  <div class="modal-overlay" id="traceModal" role="dialog" aria-modal="true" aria-label="Agent Trace Details" hidden>
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title">Agent Trace</h2>
+        <button class="modal__close" id="modalClose" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal__body" id="modalBody">
+        <!-- Trace flow injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
