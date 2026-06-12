@@ -47,12 +47,673 @@ When reviewing this solution, only the following files and directories are share
 *These sections serve as placeholders for detailed generative prompts which will be added shortly.*
 
 ### 1. ChatGPT / Claude Master Prompt
-> [!NOTE]
-> *Placeholder for the presentation master prompt. Copy and paste your customized system prompts here once defined.*
+This prompt is designed to instruct Claude or ChatGPT to understand the full domain requirements of the high-throughput payment network fraud detection platform.
 
-```text
-[INSERT CHATGPT/CLAUDE MASTER PROMPT HERE]
+```markdown
+# Real-Time Fraud Detection and Escalation – Production-Grade Multi-Agent System
+
+## Overview
+
+Design a production-grade real-time fraud detection and escalation system for a high-throughput payment network. The system operates inline with card transactions and must make a decision before the payment authorization response is returned to the payment switch.
+
+For every incoming transaction, the system must produce exactly one of the following outcomes:
+
+* APPROVE – Allow the transaction to proceed.
+* DECLINE – Block the transaction as suspected fraud.
+* ESCALATE – Route the transaction for additional verification or review before a final decision is made.
+
+The system sits between the point-of-sale (POS) terminal or online checkout and the issuer authorization response. The decision must be made under strict latency constraints while dealing with incomplete information, unreliable supporting services, and varying levels of transaction risk.
+
+The exercise focuses on architecture, orchestration, reliability, explainability, and production-readiness rather than machine learning model development.
+
+---
+
+# Business Scenario
+
+A national credit card network processes thousands of transactions per second on behalf of millions of cardholders.
+
+The fraud operations team wants to deploy an intelligent fraud detection and escalation system capable of evaluating each transaction in real time and determining whether it should be:
+
+1. Approved
+2. Declined
+3. Escalated for further verification
+
+The system must operate inline with payment processing and therefore has a strict latency budget.
+
+Transactions range from clearly legitimate to clearly fraudulent, with many ambiguous cases in between. The system must intelligently decide when to spend additional time gathering signals and when to return a decision immediately.
+
+---
+
+# Environment Constraints
+
+The fraud detection system operates in a production payment environment where:
+
+## Latency Requirements
+
+Authorization decisions must be returned to the upstream payment switch within a strict latency budget.
+
+Any additional investigation consumes part of that budget.
+
+The system must continuously track remaining latency and decide whether deeper analysis is still affordable.
+
+---
+
+## Incomplete Information
+
+At decision time, only information currently available can be used.
+
+Long-tail fraud indicators such as:
+
+* Chargebacks
+* Customer disputes
+* Confirmed fraud investigations
+
+arrive hours or days later and are unavailable when the authorization decision is made.
+
+The system must make decisions using only the data available at the time of the transaction.
+
+---
+
+## Asymmetric Error Costs
+
+The cost of the two error types is not equal.
+
+### False Positive
+
+A legitimate transaction is blocked.
+
+Consequences:
+
+* Lost revenue
+* Customer dissatisfaction
+* Customer churn
+* Increased support costs
+
+### False Negative
+
+A fraudulent transaction is approved.
+
+Consequences:
+
+* Financial losses
+* Chargebacks
+* Regulatory concerns
+* Brand damage
+
+The system must explicitly account for these differing business costs.
+
+---
+
+## Service Dependencies
+
+The fraud system depends on multiple supporting services.
+
+Examples include:
+
+* Customer history systems
+* Risk scoring services
+* Geolocation services
+* Verification systems
+* Human analyst queues
+
+Each service may:
+
+* Fail
+* Timeout
+* Return incomplete information
+* Become rate limited
+
+The fraud detection system must continue operating safely even when one or more dependencies are unavailable.
+
+---
+
+## Operational Requirements
+
+The system is expected to run continuously in production.
+
+Requirements include:
+
+* 24x7 availability
+* Observability
+* Debuggability
+* Reliability
+* Safe deployment practices
+
+---
+
+# Why This Problem Is Non-Trivial
+
+The solution must address several competing concerns.
+
+## 1. Latency vs Investigation Depth
+
+Every additional service call consumes time.
+
+The system must determine:
+
+* When deeper investigation is justified
+* When to stop gathering signals
+* How remaining latency affects future decisions
+
+---
+
+## 2. Asymmetric Error Costs
+
+False positives and false negatives affect the business differently.
+
+Thresholds and decision policies must reflect these different costs.
+
+---
+
+## 3. Incomplete Information
+
+The system must commit to a decision despite not having perfect information.
+
+Waiting indefinitely is not possible.
+
+---
+
+## 4. Unreliable Supporting Services
+
+External services and agents can:
+
+* Timeout
+* Fail
+* Return partial results
+
+The fraud system must degrade gracefully and continue making safe decisions.
+
+---
+
+## 5. Ambiguous Middle Ground
+
+Many transactions are obviously safe or obviously fraudulent.
+
+The difficult cases fall between these extremes.
+
+The system must have a deliberate strategy for handling uncertain transactions.
+
+---
+
+## 6. Coordination Overhead
+
+If multiple agents are used:
+
+* Their responsibilities must be clearly defined.
+* Communication must be controlled.
+* Redundant work must be avoided.
+* Runaway loops must be prevented.
+* Latency growth must remain bounded.
+
+---
+
+## 7. Production-Grade Quality
+
+Requirements such as:
+
+* Auditability
+* Observability
+* Configurability
+* Reliability
+* Explainability
+
+are first-class concerns, not afterthoughts.
+
+---
+
+# Core Problem Statement
+
+Design and describe a production-grade end-to-end fraud detection and escalation system.
+
+The system may use:
+
+* A single intelligent agent
+* Multiple specialized agents
+
+For every transaction, the system must:
+
+1. Receive the transaction.
+2. Investigate risk signals.
+3. Produce APPROVE, DECLINE, or ESCALATE.
+4. Return the decision within the latency budget.
+5. Provide a clear explanation for the decision.
+
+The design must include:
+
+* Lightweight checks
+* AI-based signals and/or risk scores
+* Escalation paths
+* Failure handling
+* Audit trails
+
+---
+
+# End-to-End Flow Requirements
+
+The solution must describe the complete lifecycle of a transaction.
+
+## 1. Ingress
+
+Explain:
+
+* How transactions enter the system
+* Request validation
+* Data normalization
+* Queue, stream, or synchronous processing model
+
+---
+
+## 2. Orchestration
+
+Explain:
+
+* How control is handed to agents
+* Budget allocation
+* Sequential vs parallel execution
+* Loop prevention
+* Maximum investigation depth
+
+---
+
+## 3. Investigation
+
+Explain:
+
+* Which tools are called
+* In what order
+* Timeout policies
+* Trigger conditions
+* Signal collection strategy
+
+---
+
+## 4. Decision
+
+Explain:
+
+* How APPROVE, DECLINE, or ESCALATE is chosen
+* How confidence is measured
+* How explanations are generated
+* How reasoning is recorded
+
+---
+
+## 5. Egress
+
+Explain:
+
+* How the decision is returned
+* How latency guarantees are enforced
+
+---
+
+## 6. Post-Decision Actions
+
+Explain asynchronous activities such as:
+
+* OTP delivery
+* Analyst notifications
+* Logging
+* Metric emission
+* Audit persistence
+
+---
+
+## 7. Replay and Feedback
+
+Explain:
+
+* How historical decisions can be replayed
+* How later outcomes are linked back
+* How feedback improves future decisions
+
+Possible feedback signals include:
+
+* Confirmed fraud
+* Analyst verdicts
+* Chargebacks
+* OTP success or failure
+* Customer disputes
+
+---
+
+# Transaction Input Schema
+
+Each transaction contains at least:
+
+```json
+{
+  "transaction_id": "string",
+  "card_id": "string",
+  "customer_id": "string",
+  "amount": 100.00,
+  "currency": "USD",
+  "merchant_id": "string",
+  "merchant_category": "string",
+  "location": {
+    "country": "string",
+    "city": "string",
+    "coordinates": "optional"
+  },
+  "device_id": "string",
+  "channel": "in-person | online | contactless | recurring",
+  "timestamp": "ISO-8601"
+}
 ```
+
+# Available Tools and Data Sources
+
+The system may call any of the following services.
+
+## Customer History Service
+
+Provides:
+
+* Spending profile
+* Historical transaction behavior
+* Recent transaction history
+
+---
+
+## Geolocation Service
+
+Provides:
+
+* Distance from previous transaction
+* Country risk information
+* Location anomalies
+
+---
+
+## External Risk Scoring Service
+
+Provides:
+
+* Numeric fraud risk score
+
+---
+
+## Blacklist Service
+
+Provides:
+
+* Card blacklist status
+* Merchant blacklist status
+* Device blacklist status
+
+---
+
+## Verification Service
+
+Provides:
+
+* OTP verification
+* Push notification verification
+* Additional customer confirmation
+
+---
+
+## Human Analyst Queue
+
+Provides:
+
+* Manual investigation capability
+* Escalation endpoint
+
+---
+
+# Multi-Agent Design Requirements
+
+If multiple agents are used, the design must define:
+
+## Topology
+
+* Complete component diagram
+* Agent relationships
+* Call graph
+
+---
+
+## Agent Responsibilities
+
+For every agent:
+
+* Purpose
+* Inputs
+* Outputs
+* Authority boundaries
+
+---
+
+## Communication Contract
+
+Define:
+
+* Message schema
+* Agent interfaces
+* Tool interfaces
+
+---
+
+## Orchestration Model
+
+Choose and justify:
+
+* Centralized orchestrator
+* Supervisor model
+* Peer-to-peer model
+* Hybrid model
+
+---
+
+## Concurrency
+
+Specify:
+
+* Parallel calls
+* Sequential calls
+* Result reconciliation strategy
+
+---
+
+## Loop and Depth Control
+
+Specify:
+
+* Maximum agent hops
+* Retry limits
+* Investigation depth limits
+
+---
+
+## Budget Sharing
+
+Specify:
+
+* Latency allocation
+* Per-agent time limits
+* Tool budgets
+
+---
+
+## Failure Isolation
+
+Specify:
+
+* Behavior when an agent fails
+* Behavior when a tool fails
+
+---
+
+## Determinism
+
+Given identical inputs and identical tool responses, the system should produce identical decisions and explanations.
+
+---
+
+# Production-Grade Requirements
+
+The system runs in a regulated environment.
+
+The design must address:
+
+## Latency
+
+Defined per-transaction latency budget and enforcement strategy.
+
+---
+
+## Reliability
+
+No single failure should silently produce an APPROVE decision.
+
+Every dependency requires:
+
+* Timeout policy
+* Fallback policy
+
+---
+
+## Idempotency
+
+Duplicate or replayed transaction requests must not produce:
+
+* Different decisions
+* Duplicate side effects
+* Duplicate OTP requests
+
+---
+
+## Configurability
+
+The following should be configurable rather than hardcoded:
+
+* Thresholds
+* Rule sets
+* Agent topology
+* Latency budgets
+
+---
+
+## Observability
+
+Provide:
+
+* Structured logs
+* Metrics
+* Traces
+* Alerts
+
+Metrics should include:
+
+* Agent latency
+* Tool latency
+* Error rates
+* Decision distributions
+* Fallback usage
+
+---
+
+## Auditability
+
+Every decision must generate a replayable audit record containing:
+
+* Final decision
+* Reason
+* Signals consulted
+* Agents involved
+* Tool outputs
+* Thresholds used
+* Timing information
+
+---
+
+## Explainability
+
+Every decision must include a human-readable explanation.
+
+---
+
+## Safety Controls
+
+Include:
+
+* Kill switches
+* Circuit breakers
+* Rate limiting
+* Per-card controls
+* Per-merchant controls
+
+---
+
+## Deployability
+
+Support safe rollout methods such as:
+
+* Canary deployments
+* Shadow mode
+* Feature flags
+* A/B testing
+
+---
+
+## Security and Privacy
+
+Protect sensitive information including:
+
+* PAN/card data
+* Device identifiers
+* Location information
+
+Data should be minimized and protected both in transit and at rest.
+
+---
+
+## Feedback Loop
+
+The design must describe how future outcomes are collected and incorporated into the system.
+
+Examples:
+
+* Fraud confirmations
+* Analyst outcomes
+* OTP success/failure
+* Customer disputes
+
+---
+
+# Functional Scenarios the Solution Must Handle
+
+The system must demonstrate handling of:
+
+1. Clearly fraudulent transactions that should be declined immediately.
+2. Clearly legitimate transactions that should be approved immediately.
+3. Transactions requiring deeper investigation.
+4. Transactions with inconclusive signals.
+5. Tool failures and timeouts.
+6. Agent failures.
+7. Partial data availability.
+8. Duplicate or replayed transactions.
+9. Selection of escalation channels.
+10. Degraded mode operation when dependencies are unavailable.
+
+---
+
+# Out of Scope
+
+Participants are NOT expected to:
+
+* Train a machine learning fraud model.
+* Build a real OTP delivery system.
+* Build a biometric verification system.
+* Build a human analyst console.
+* Implement a complete stream-processing platform.
+* Integrate with an actual payment network.
+* Implement a specific agent framework.
+
+Existing risk scoring services may be assumed.
+```
+
 
 ### 2. Vibecoding Prompt
 > [!NOTE]
