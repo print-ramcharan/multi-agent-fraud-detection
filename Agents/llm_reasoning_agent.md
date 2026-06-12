@@ -5,15 +5,15 @@
 * **Implementation Class**: `LLMReasoningAgent` ([llm_reasoning.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/specialist/llm_reasoning.py))
 
 ## Overview
-An advisory agent that leverages the **Google Antigravity (AGY) SDK** to perform a cognitive synthesis of evidence gathered from all preceding agents. 
+An advisory agent that leverages a **local LLM interface** to perform a cognitive synthesis of evidence gathered from all preceding agents. 
 
 ## Interaction Topology
 
 ```mermaid
 graph LR
     Orch["Orchestrator Engine"] -->|Transaction Data & Agent Outputs| Agent["LLM Reasoning Agent"]
-    Agent -->|Invokes SDK| SDK["Google Antigravity SDK"]
-    SDK -->|API Request| LLM["Local Gemini API Endpoint"]
+    Agent -->|JSON-RPC / REST| API["LLM API Client"]
+    API -->|API Request| LLM["Local LLM Endpoint"]
     Agent -->|Validate| Guard["Guardrail Agent"]
     Agent -->|Collate advisory| Engine["Decision Engine"]
 ```
@@ -22,10 +22,10 @@ graph LR
 > **Advisory Only**: In compliance with security standards, the LLM reasoning agent is not authorized to make final block/approve decisions. It only issues recommendations (`APPROVE`, `DECLINE`, `ESCALATE`) along with structured reasoning.
 
 ## Mechanisms & Integration
-Uses the Google Antigravity SDK:
+Uses a local LLM integration:
 1. Constructs a structured prompt detailing current transaction attributes and collected Tier 1 + Specialist outputs.
-2. Invokes the local agent endpoint using `google.antigravity.Agent` and parses structured JSON output matching a strict `RiskAssessment` Pydantic schema.
-3. Automatically falls back to a deterministic rule-based synthesis if the SDK is unavailable, disabled, or times out.
+2. Invokes the local LLM endpoint and parses structured JSON output matching a strict `RiskAssessment` Pydantic schema.
+3. Automatically falls back to a deterministic rule-based synthesis if the LLM service is unavailable, disabled, or times out.
 
 ## Input Schema (JSON)
 ```json
