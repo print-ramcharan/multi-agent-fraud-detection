@@ -9,6 +9,9 @@ The platform uses a layered multi-agent system split into **Tier 1 (Fast-Path)**
 
 To satisfy the payment switch's real-time authorization loop, latency is strictly partitioned:
 
+![Latency Budget Allocation Across Layers](../docs/images/budget_allocation.jpeg)
+
+
 | Phase / Component | Latency Budget | Responsibility |
 | :--- | :--- | :--- |
 | **Ingress Validation** | 10ms | Spring Boot gateway, payload normalization, signature validation, Redis idempotency. |

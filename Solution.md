@@ -109,6 +109,9 @@ graph TD
 
 To satisfy the payment switch's real-time authorization loop, latency is strictly partitioned:
 
+![Latency Budget Allocation Across Layers](docs/images/budget_allocation.jpeg)
+
+
 | Component / Layer | Budget (ms) | Description |
 | :--- | :--- | :--- |
 | **Ingress Validation** | 10ms | Spring Boot gateway, payload normalization, signature validation, Redis idempotency. |
