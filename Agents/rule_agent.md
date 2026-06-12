@@ -7,6 +7,16 @@
 ## 📝 Overview
 Executes deterministic, compliance-driven business rules. This agent requires no external database or network lookups, making it highly reliable and extremely fast (<2ms).
 
+## 🗺️ Interaction Topology
+
+```mermaid
+graph LR
+    Orch["Orchestrator Engine"] -->|NormalizedTransaction| Agent["Rule Agent"]
+    Agent -->|Deterministic Check| Rules["Local Python Rule Engine<br>(Limits, Sanctions, Restricted Hours)"]
+    Agent -->|Validate| Guard["Guardrail Agent"]
+    Agent -->|Collate Result| Engine["Decision Engine"]
+```
+
 ## ⚙️ Rules Evaluated
 1. **Sanctioned Country Check**: Compares the transaction country against sanctioned territories (`KP`, `IR`, `SY`, `CU`, `SD`). A match raises a **critical** violation (unconditional decline).
 2. **High-Risk Country Check**: Flags transactions from high-risk locations.
@@ -20,12 +30,33 @@ Executes deterministic, compliance-driven business rules. This agent requires no
 5. **Suspicious Hour**: Flags transactions occurring during restricted hours (1:00 AM - 5:00 AM UTC).
 6. **Very High Amount**: Flags any transaction above $25,000.
 
-## 📥 Input Params
-* `NormalizedTransaction` containing `country`, `amount_usd`, `channel`, `merchant_category`, and `timestamp`.
+## 📥 Input Schema (JSON)
+```json
+{
+  "country": "KP",
+  "amount_usd": 12500.00,
+  "channel": "online",
+  "merchant_category": "casino",
+  "timestamp": 1781268800
+}
+```
 
-## 📤 Output Structure
-* `violation`: `bool` (true if any rule was violated)
-* `rule_name`: `str` (the name of the worst rule violated)
-* `rule_severity`: `str` ("critical" | "high" | "medium" | "low" | "none")
-* `violations`: List of all rules violated.
-* `evidence`: Supporting metadata for decision audit trails.
+## 📤 Output Schema (JSON)
+```json
+{
+  "violation": true,
+  "rule_name": "sanctioned_country",
+  "rule_severity": "critical",
+  "violations": [
+    "sanctioned_country",
+    "high_risk_merchant_category"
+  ],
+  "evidence": [
+    {
+      "source": "rule_agent",
+      "claim": "Transaction country KP is sanctioned. Merchant category is high-risk casino.",
+      "confidence": 1.0
+    }
+  ]
+}
+```

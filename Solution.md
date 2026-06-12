@@ -75,6 +75,34 @@ graph TD
     Canary -->|Promote| BlueGreen[Blue-Green Production]
 ```
 
+### 🔄 Orchestration & Agent Execution Flow
+
+The orchestrator dynamically routes transactions through Tier-1 (Fast-Path) and Tier-2 (Specialist/Escalation) agents in sequence, optimized for confidence bounds:
+
+```mermaid
+graph TD
+    A[Client API / Ingress] -->|POST /evaluate| B[Orchestrator Engine]
+    B -->|Parallel Dispatch| T1[Tier 1: Fast-Path Agents]
+    T1 --> C1[Blacklist Agent]
+    T1 --> C2[Customer Profile Agent]
+    T1 --> C3[ML Risk Agent]
+    T1 --> C4[Rule Engine Agent]
+    
+    T1 -->|Collect Outputs| D{High Confidence / Fast Path?}
+    D -->|Yes| E[Governance Policy Enforcer]
+    D -->|No: Uncertain / Borderline| F[Orchestrator: Escalation Gate]
+    
+    F -->|Parallel Dispatch| T2[Tier 2: Specialist Agents]
+    T2 --> S1[Device Fingerprint Agent]
+    T2 --> S2[Geo-Location Agent]
+    T2 --> S3[Velocity Spike Agent]
+    T2 --> S4[LLM Reasoning Agent]
+    
+    T2 -->|Collect Specialist Outputs| E
+    E -->|Enforce Compliance & Safety| G[Audit Store & SQLite DB]
+    G -->|Response| H[Client Response]
+```
+
 ---
 
 ## ⚡ SLA Latency Budget Allocation (100ms Hard Limit)

@@ -7,6 +7,15 @@
 ## 📝 Overview
 A strict validator that executes immediately after every agent completes execution. Validates outputs against data schemas, performance metrics, and compliance policies to enforce platform stability.
 
+## 🗺️ Interaction Topology
+
+```mermaid
+graph LR
+    Agents["Target Agents (T1 / T2)"] -->|Raw Agent Outputs| Agent["Guardrail Agent"]
+    Agent -->|Validate| LocalChecks["Local In-Memory Verifications<br>(Schema, Budget, Evidence, Hallucinations)"]
+    Agent -->|Validation Result| Orch["Orchestrator / Decision Engine"]
+```
+
 ## 🛠️ Mechanisms & Validations
 The Guardrail Agent executes 5 major validations:
 1. **Evidence Validation**: Verifies that any agent producing a significant threat flag (e.g. `blacklisted=True` or `burst=True`) has populated the evidence list with supporting assertions.
@@ -17,14 +26,33 @@ The Guardrail Agent executes 5 major validations:
    * Scores (`risk_score`, `device_risk`, `confidence`) must be within $[0.0, 1.0]$.
    * Quantities (distances, counts) must be non-negative.
 
-## 📥 Input Params
-* Target agent metadata, output dictionary, duration logs, and context counts.
+## 📥 Input Schema (JSON)
+```json
+{
+  "target_agent": "ml_risk_agent",
+  "output_payload": {
+    "risk_score": 0.35,
+    "model_version": "rf-v1.2",
+    "feature_importances": {
+      "amount": 0.45,
+      "country_risk": 0.25
+    },
+    "evidence": []
+  },
+  "duration_ms": 18.5,
+  "max_hops": 3
+}
+```
 
-## 📤 Output Structure
-* `valid`: `bool` (true if all guardrail checks pass)
-* `violations`: List of validation warnings/errors.
-* `evidence_valid`: `bool`
-* `schema_valid`: `bool`
-* `policy_valid`: `bool`
-* `budget_valid`: `bool`
-* `hallucination_detected`: `bool`
+## 📤 Output Schema (JSON)
+```json
+{
+  "valid": true,
+  "violations": [],
+  "evidence_valid": true,
+  "schema_valid": true,
+  "policy_valid": true,
+  "budget_valid": true,
+  "hallucination_detected": false
+}
+```
