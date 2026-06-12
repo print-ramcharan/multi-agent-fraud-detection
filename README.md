@@ -716,9 +716,485 @@ Existing risk scoring services may be assumed.
 
 
 ### 2. Vibecoding Prompt
-> [!NOTE]
-> *Placeholder for the developer/vibecoding prompt. Copy and paste your customized code-generation instructions here once defined.*
+This prompt is designed to instruct an AI assistant to write code and build the prototype application.
+
+```markdown
+# Prompt: Build a Real-Time Fraud Detection Platform Prototype
+
+You are a Principal Software Engineer and Distributed Systems Architect. Design and implement an end-to-end prototype of a Real-Time Fraud Detection Platform capable of processing financial transactions with low latency and high throughput.
+
+The goal is to demonstrate scalable system design, event-driven architecture, distributed processing, and AI-assisted decision making.
+
+The implementation should prioritize clean architecture, extensibility, observability, fault tolerance, and security.
+
+## Tech Stack
+
+Frontend:
+
+* ReactJS
+* TypeScript
+* TailwindCSS
+* React Query
+* Recharts for dashboards
+
+Backend:
+
+* Node.js + Express (prototype)
+* TypeScript
+
+Messaging:
+
+* Apache Kafka
+* Kafka UI
+
+Storage:
+
+* PostgreSQL
+* Redis
+
+Infrastructure:
+
+* Docker
+* Docker Compose
+
+Monitoring:
+
+* Prometheus
+* Grafana
+
+Authentication:
+
+* JWT Authentication
+
+Optional AI:
+
+* OpenAI API or local LLM integration
+
+---
+
+# Functional Requirements
+
+The platform should simulate financial transactions and detect fraud in real time.
+
+Users can:
+
+* Generate transactions
+* View transaction stream
+* Observe fraud scores
+* View alerts
+* Monitor system metrics
+* Review decisions
+
+---
+
+# System Architecture
+
+## Components
+
+### Transaction Generator Service
+
+Responsibilities:
+
+* Generate mock transactions
+* Produce events to Kafka
+
+Transaction schema:
+
+```json
+{
+  "transactionId": "uuid",
+  "userId": "user-123",
+  "amount": 5000,
+  "currency": "USD",
+  "merchant": "Amazon",
+  "country": "US",
+  "deviceId": "device-001",
+  "timestamp": "ISO8601"
+}
+```
+
+Kafka Topic:
 
 ```text
-[INSERT VIBECODING PROMPT HERE]
+transactions
 ```
+
+---
+
+### Fraud Detection Service
+
+Consumes:
+
+```text
+transactions
+```
+
+Perform rule-based detection.
+
+Rules:
+
+1. Amount > $10,000
+
+2. Multiple countries within 5 minutes
+
+3. Multiple devices in short time
+
+4. Excessive transaction frequency
+
+5. Velocity checks
+
+Compute:
+
+```json
+{
+  "riskScore": 0-100,
+  "reason": "High transaction amount"
+}
+```
+
+Publish:
+
+```text
+fraud-decisions
+```
+
+---
+
+### Decision Engine
+
+Rules:
+
+Risk Score:
+
+0-30:
+APPROVE
+
+31-70:
+OTP_REQUIRED
+
+71-100:
+BLOCK
+
+Output:
+
+```json
+{
+  "transactionId": "...",
+  "decision": "BLOCK",
+  "riskScore": 90,
+  "reason": "Suspicious geo pattern"
+}
+```
+
+---
+
+### Notification Service
+
+Consumes:
+
+```text
+fraud-decisions
+```
+
+Simulates:
+
+* SMS
+* Email
+* Push Notification
+
+Log notification events.
+
+---
+
+### Feedback Service
+
+Allows fraud analysts to mark:
+
+* True Positive
+* False Positive
+
+Store feedback in PostgreSQL.
+
+Future model retraining can use this data.
+
+---
+
+# Kafka Topics
+
+Create:
+
+```text
+transactions
+fraud-decisions
+alerts
+feedback
+notifications
+```
+
+Support:
+
+* Partitioning
+* Consumer groups
+* Retry strategy
+* Dead Letter Queue
+
+DLQ:
+
+```text
+transactions-dlq
+```
+
+---
+
+# PostgreSQL Schema
+
+Users
+
+```sql
+users(
+    id UUID PRIMARY KEY,
+    name TEXT
+)
+```
+
+Transactions
+
+```sql
+transactions(
+    id UUID PRIMARY KEY,
+    user_id UUID,
+    amount DECIMAL,
+    merchant TEXT,
+    country TEXT,
+    risk_score INT,
+    decision TEXT,
+    created_at TIMESTAMP
+)
+```
+
+Feedback
+
+```sql
+feedback(
+    id UUID PRIMARY KEY,
+    transaction_id UUID,
+    label TEXT,
+    created_at TIMESTAMP
+)
+```
+
+---
+
+# Redis Usage
+
+Use Redis for:
+
+* User profiles
+* Device history
+* Velocity checks
+* Recent transactions
+* Rate limiting
+
+TTL:
+
+```text
+5 minutes
+15 minutes
+1 hour
+```
+
+---
+
+# Security Requirements
+
+Implement:
+
+* JWT Authentication
+* RBAC (Admin/User)
+* API rate limiting
+* Input validation
+* HTTPS ready configuration
+* Secret management via environment variables
+
+Never hardcode secrets.
+
+---
+
+# Reliability Requirements
+
+Implement:
+
+* Retry policies
+* Exponential backoff
+* Kafka consumer recovery
+* Idempotent processing
+* Graceful shutdown
+* Health checks
+
+Endpoints:
+
+```text
+/health
+/ready
+```
+
+---
+
+# Observability
+
+Expose Prometheus metrics:
+
+```text
+transactions_processed_total
+fraud_detected_total
+consumer_lag
+api_requests_total
+processing_latency_ms
+```
+
+Visualize in Grafana.
+
+---
+
+# React Dashboard
+
+Pages:
+
+## Login
+
+JWT login.
+
+---
+
+## Dashboard
+
+Cards:
+
+* Transactions processed
+* Fraud detected
+* System health
+* Consumer lag
+
+Real-time updates via WebSocket.
+
+---
+
+## Transaction Stream
+
+Live stream of Kafka events.
+
+Columns:
+
+* Transaction ID
+* Amount
+* Merchant
+* Country
+* Risk Score
+* Decision
+
+Color coding:
+
+Green:
+APPROVED
+
+Yellow:
+OTP_REQUIRED
+
+Red:
+BLOCKED
+
+---
+
+## Fraud Analytics
+
+Charts:
+
+* Fraud by country
+* Risk score distribution
+* Transactions per minute
+* Decision breakdown
+
+---
+
+## Analyst Console
+
+Allow analysts to:
+
+* Review transactions
+* Override decisions
+* Submit feedback
+
+---
+
+# Docker Compose Services
+
+Create containers for:
+
+```text
+react-ui
+api-gateway
+transaction-generator
+fraud-service
+decision-engine
+notification-service
+feedback-service
+postgres
+redis
+zookeeper
+kafka
+kafka-ui
+prometheus
+grafana
+```
+
+All services should communicate through Docker networks.
+
+---
+
+# Non Functional Requirements
+
+Target:
+
+* 1000+ TPS in prototype
+* Horizontal scalability
+* Fault tolerance
+* Stateless services
+* Event-driven communication
+* Easy future migration to Kubernetes
+
+---
+
+# Future Enhancements
+
+Design the architecture so future integrations are easy:
+
+* Apache Flink
+* Apache Spark Streaming
+* ML Models
+* LLM Reasoning Agent
+* Guardrail Agent
+* MCP Servers
+* Feature Store
+* Kubernetes Deployment
+* Multi-region replication
+
+---
+
+# Deliverables
+
+Generate:
+
+1. Monorepo structure
+2. Docker Compose file
+3. Kafka configuration
+4. Backend microservices
+5. React frontend
+6. PostgreSQL migrations
+7. Redis integration
+8. Prometheus metrics
+9. Grafana dashboards
+10. README with setup instructions
+
+Generate code incrementally, starting with Docker Compose and infrastructure setup first.
+```
+
