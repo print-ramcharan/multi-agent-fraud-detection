@@ -17,6 +17,20 @@ In modern banking systems, processing card network transactions requires balanci
 
 ---
 
+## System Architecture Diagrams
+
+### First Draft Architecture Diagram (Initial Design)
+Below is the initial conceptual flow diagram mapping out the decision path from the payment switch down through the parallel Tier-1 checks, uncertainty evaluation, Specialist dispatching, and asynchronous post-processing:
+
+![First Draft Architecture Diagram](file:///Users/ram/.gemini/antigravity-ide/brain/157627e6-e7d2-4498-a13d-750e5684c6a8/media__1781254655126.png)
+
+### Refined Architecture Diagram (Updated Design)
+Below is the refined and updated system architecture mapping the event-driven backbone, including the LangGraph Orchestrator, Tier-1 Parallel Agents, Tier-2 Specialist Agents, Model Context Protocol (MCP) Gateway layer, and the asynchronous feedback loop:
+
+![Refined Architecture Diagram](file:///Users/ram/.gemini/antigravity-ide/brain/157627e6-e7d2-4498-a13d-750e5684c6a8/media__1781254518495.png)
+
+---
+
 ## Repository Guide & Shared Deliverables
 
 When reviewing this solution, only the following files and directories are shared and should be read to understand the design:
