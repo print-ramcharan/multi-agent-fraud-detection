@@ -38,7 +38,7 @@ Below is the refined and updated system architecture mapping the event-driven ba
 When reviewing this solution, only the following files and directories are shared and should be read to understand the design:
 
 1. **[README.md](file:///Users/ram/Desktop/multi-agent-fraud-detection/README.md)** (This document): The entry point detailing the problem statement, repository organization, files reading sequence, and developer prompts.
-2. **[Solution.md](file:///Users/ram/Desktop/multi-agent-fraud-detection/Solution.md)**: The core system architecture design. It details the complete topology, latency budget tables, the Model Context Protocol (MCP) gateway specification, governance constitutions, and the asynchronous feedback loop.
+2. **[Polabathina Ramcharan Teja.Solution.md](file:///Users/ram/Desktop/multi-agent-fraud-detection/Polabathina%20Ramcharan%20Teja.Solution.md)**: The core system architecture design. It details the complete topology, latency budget tables, the Model Context Protocol (MCP) gateway specification, governance constitutions, and the asynchronous feedback loop.
 3. **[Agents/](file:///Users/ram/Desktop/multi-agent-fraud-detection/Agents)**: Directory containing comprehensive specifications for each participating agent, including their default latency budgets, tools, execution mechanisms, and exact JSON schemas for inputs and outputs:
    - [Agents Overview](file:///Users/ram/Desktop/multi-agent-fraud-detection/Agents/overview.md)
    - [Blacklist Agent](file:///Users/ram/Desktop/multi-agent-fraud-detection/Agents/blacklist_agent.md)
