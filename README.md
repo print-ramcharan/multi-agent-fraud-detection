@@ -49,7 +49,7 @@ When reviewing this solution, only the following files and directories are share
 ### 1. ChatGPT / Claude Master Prompt
 This prompt is designed to instruct Claude or ChatGPT to understand the full domain requirements of the high-throughput payment network fraud detection platform.
 
-```markdown
+````markdown
 # Real-Time Fraud Detection and Escalation – Production-Grade Multi-Agent System
 
 ## Overview
@@ -712,13 +712,13 @@ Participants are NOT expected to:
 * Implement a specific agent framework.
 
 Existing risk scoring services may be assumed.
-```
+````
 
 
 ### 2. Vibecoding Prompt
 This prompt is designed to instruct an AI assistant to write code and build the prototype application.
 
-```markdown
+````markdown
 # Prompt: Build a Real-Time Fraud Detection Platform Prototype
 
 You are a Principal Software Engineer and Distributed Systems Architect. Design and implement an end-to-end prototype of a Real-Time Fraud Detection Platform capable of processing financial transactions with low latency and high throughput.
@@ -1196,5 +1196,5 @@ Generate:
 10. README with setup instructions
 
 Generate code incrementally, starting with Docker Compose and infrastructure setup first.
-```
+````
 
