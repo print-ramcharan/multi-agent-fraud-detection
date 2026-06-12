@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 10ms
 * **Implementation Class**: `VelocityAgent` ([velocity_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/specialist/velocity_agent.py))
 
-## 📝 Overview
+## Overview
 Tracks high-frequency transaction bursts and spending velocity anomalies over rolling time windows (1-hour and 24-hour limits).
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -19,7 +19,7 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & MCP Tools
+## Mechanisms & MCP Tools
 Queries the `velocity_server` MCP service:
 1. `get_transaction_velocity(customer_id)`: Returns count of transactions in the last hour and last 24 hours, and distinct merchant count.
 2. `get_amount_velocity(customer_id)`: Returns sum of transacted amount in the last hour and last 24 hours, and average hourly baseline.
@@ -31,14 +31,14 @@ Queries the `velocity_server` MCP service:
 * **Acceleration Burst**: Hourly spend $> 3.0\times$ baseline average.
 * **Merchant Diversity Burst**: $\ge 5$ distinct merchants transacted in under 1 hour.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "customer_id": "cust_456789"
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "transactions_last_hour": 2,

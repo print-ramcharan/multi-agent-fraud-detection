@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 5ms
 * **Implementation Class**: `GuardrailAgent` ([guardrail_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/guardrail_agent.py))
 
-## 📝 Overview
+## Overview
 A strict validator that executes immediately after every agent completes execution. Validates outputs against data schemas, performance metrics, and compliance policies to enforce platform stability.
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -16,7 +16,7 @@ graph LR
     Agent -->|Validation Result| Orch["Orchestrator / Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & Validations
+## Mechanisms & Validations
 The Guardrail Agent executes 5 major validations:
 1. **Evidence Validation**: Verifies that any agent producing a significant threat flag (e.g. `blacklisted=True` or `burst=True`) has populated the evidence list with supporting assertions.
 2. **Schema Validation**: Assures the response conforms to expected JSON/Pydantic structure and contains no empty or null payloads.
@@ -26,7 +26,7 @@ The Guardrail Agent executes 5 major validations:
    * Scores (`risk_score`, `device_risk`, `confidence`) must be within $[0.0, 1.0]$.
    * Quantities (distances, counts) must be non-negative.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "target_agent": "ml_risk_agent",
@@ -44,7 +44,7 @@ The Guardrail Agent executes 5 major validations:
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "valid": true,

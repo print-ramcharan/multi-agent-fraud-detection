@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 10ms
 * **Implementation Class**: `BlacklistAgent` ([blacklist_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/tier1/blacklist_agent.py))
 
-## 📝 Overview
+## Overview
 Identifies known bad actors in real-time by cross-referencing transaction attributes against high-speed blacklists.
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -19,13 +19,13 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & MCP Tools
+## Mechanisms & MCP Tools
 Queries the `blacklist_server` MCP service:
 1. `check_card_blacklist(card_id)`: Checks if the payment instrument is flagged as stolen or compromised.
 2. `check_device_blacklist(device_id)`: Checks if the device signature is associated with prior fraud events.
 3. `check_merchant_blacklist(merchant_id)`: Checks if the merchant identity matches known fraudulent endpoints.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "card_id": "card_987654",
@@ -34,7 +34,7 @@ Queries the `blacklist_server` MCP service:
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "blacklisted": true,

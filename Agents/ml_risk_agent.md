@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 25ms
 * **Implementation Class**: `MLRiskAgent` ([ml_risk_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/tier1/ml_risk_agent.py))
 
-## 📝 Overview
+## Overview
 Fetches statistical predictions from a serialized Random Forest classifier trained on historical transaction datasets.
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -19,7 +19,7 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & MCP Tools
+## Mechanisms & MCP Tools
 Queries the `ml_server` MCP service:
 * `predict_fraud_score(...)`: Supplies transaction features (amount, channel, merchant category, country, time, risk flags) and returns a probability score $[0.0, 1.0]$.
 
@@ -32,7 +32,7 @@ If the model service is offline, the agent automatically executes a deterministi
 * Online channel: `+0.05`
 * Night hours (1-4 AM): `+0.1`
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "amount_usd": 1250.00,
@@ -45,7 +45,7 @@ If the model service is offline, the agent automatically executes a deterministi
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "risk_score": 0.35,

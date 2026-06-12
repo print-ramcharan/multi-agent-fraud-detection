@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 15ms
 * **Implementation Class**: `GeoAgent` ([geo_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/specialist/geo_agent.py))
 
-## 📝 Overview
+## Overview
 Performs geographical verification, focusing on identifying "impossible travel" scenarios by analyzing elapsed time and distance between consecutive transactions.
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -19,7 +19,7 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & MCP Tools
+## Mechanisms & MCP Tools
 Queries the `geo_server` MCP service:
 1. `get_last_location(customer_id)`: Retrieves coordinates and timestamp of the customer's previous transaction.
 2. `calculate_distance(lat1, lon1, lat2, lon2)`: Computes Haversine distance in kilometers.
@@ -31,7 +31,7 @@ $$\text{Required Speed (km/h)} = \frac{\text{Distance (km)}}{\text{Time Elapsed 
 
 If the required speed exceeds **900 km/h** (commercial flight speeds), the agent flags **impossible travel** with a high confidence.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "customer_id": "cust_456789",
@@ -39,7 +39,7 @@ If the required speed exceeds **900 km/h** (commercial flight speeds), the agent
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "distance_km": 0.0,

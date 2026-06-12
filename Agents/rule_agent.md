@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 5ms
 * **Implementation Class**: `RuleAgent` ([rule_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/tier1/rule_agent.py))
 
-## 📝 Overview
+## Overview
 Executes deterministic, compliance-driven business rules. This agent requires no external database or network lookups, making it highly reliable and extremely fast (<2ms).
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -17,7 +17,7 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## ⚙️ Rules Evaluated
+## Rules Evaluated
 1. **Sanctioned Country Check**: Compares the transaction country against sanctioned territories (`KP`, `IR`, `SY`, `CU`, `SD`). A match raises a **critical** violation (unconditional decline).
 2. **High-Risk Country Check**: Flags transactions from high-risk locations.
 3. **High-Risk Merchant Category**: Flags risky merchant industries (e.g., casinos, crypto exchanges).
@@ -30,7 +30,7 @@ graph LR
 5. **Suspicious Hour**: Flags transactions occurring during restricted hours (1:00 AM - 5:00 AM UTC).
 6. **Very High Amount**: Flags any transaction above $25,000.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "country": "KP",
@@ -41,7 +41,7 @@ graph LR
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "violation": true,

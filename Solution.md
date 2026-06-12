@@ -5,7 +5,7 @@ This document specifies the target architecture, latency allocations, agent inte
 
 ---
 
-## 🏛️ System Architecture Topology
+## System Architecture Topology
 
 The platform coordinates decoupled, analytical agents through an MCP Gateway Layer, enforces strict SLA constraints via a centralized budget manager, and optimizes itself asynchronously through a Kafka-driven feedback pipeline.
 
@@ -75,7 +75,7 @@ graph TD
     Canary -->|Promote| BlueGreen[Blue-Green Production]
 ```
 
-### 🔄 Orchestration & Agent Execution Flow
+### Orchestration & Agent Execution Flow
 
 The orchestrator dynamically routes transactions through Tier-1 (Fast-Path) and Tier-2 (Specialist/Escalation) agents in sequence, optimized for confidence bounds:
 
@@ -105,7 +105,7 @@ graph TD
 
 ---
 
-## ⚡ SLA Latency Budget Allocation (100ms Hard Limit)
+## SLA Latency Budget Allocation (100ms Hard Limit)
 
 To satisfy the payment switch's real-time authorization loop, latency is strictly partitioned:
 
@@ -124,7 +124,7 @@ To satisfy the payment switch's real-time authorization loop, latency is strictl
 
 ---
 
-## 🔌 Model Context Protocol (MCP) Layer
+## Model Context Protocol (MCP) Layer
 
 Instead of calling APIs directly, all agents interact with the **MCP Gateway Layer**. This guarantees:
 * **Abstraction**: Agents call standardized schemas; tool location and transport is transparent.
@@ -134,7 +134,7 @@ Instead of calling APIs directly, all agents interact with the **MCP Gateway Lay
 
 ---
 
-## 📥 Agent Input/Output Contracts
+## Agent Input/Output Contracts
 
 ### 1. Blacklist Agent
 * **Input Schema**:
@@ -196,7 +196,7 @@ Instead of calling APIs directly, all agents interact with the **MCP Gateway Lay
 
 ---
 
-## ⚖️ Constitutional Governance Rules
+## Constitutional Governance Rules
 
 Decisions are validated against a strict set of business policies before egress:
 
@@ -217,7 +217,7 @@ rules:
 
 ---
 
-## 🔄 Asynchronous Feedback & Replay Loops
+## Asynchronous Feedback & Replay Loops
 
 Decisions are streamed to a high-throughput **Kafka Event Bus** to close the feedback loop asynchronously:
 

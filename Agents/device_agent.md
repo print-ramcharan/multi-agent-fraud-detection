@@ -4,10 +4,10 @@
 * **Default Latency Budget**: 10ms
 * **Implementation Class**: `DeviceAgent` ([device_agent.py](file:///Users/ram/Desktop/multi-agent-fraud-detection/src/agents/specialist/device_agent.py))
 
-## 📝 Overview
+## Overview
 Evaluates the physical device signature used to submit the transaction. Identifies device age, trust tier, and flags device sharing anomalies.
 
-## 🗺️ Interaction Topology
+## Interaction Topology
 
 ```mermaid
 graph LR
@@ -19,7 +19,7 @@ graph LR
     Agent -->|Collate Result| Engine["Decision Engine"]
 ```
 
-## 🛠️ Mechanisms & MCP Tools
+## Mechanisms & MCP Tools
 Queries the `device_server` MCP service:
 1. `get_device_profile(device_id, customer_id)`: Determines if this is a new device or how long it has been associated with this account.
 2. `check_device_sharing(device_id)`: Checks if this device has been used by multiple distinct customer IDs within a short window (a major signal of credential stuffing or compromise).
@@ -30,7 +30,7 @@ Queries the `device_server` MCP service:
 * Device age under 7 days: `+0.2`
 * Max Risk capped at `1.0`, baseline trusted device is `0.05`.
 
-## 📥 Input Schema (JSON)
+## Input Schema (JSON)
 ```json
 {
   "device_id": "dev_abc123",
@@ -38,7 +38,7 @@ Queries the `device_server` MCP service:
 }
 ```
 
-## 📤 Output Schema (JSON)
+## Output Schema (JSON)
 ```json
 {
   "new_device": false,

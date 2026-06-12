@@ -4,7 +4,7 @@ This repository contains the architecture design, latency allocations, and agent
 
 ---
 
-## 📖 The Problem & Operational Context
+## The Problem & Operational Context
 
 In modern banking systems, processing card network transactions requires balancing speed with precision. The platform addresses several critical real-time engineering challenges:
 
@@ -17,7 +17,7 @@ In modern banking systems, processing card network transactions requires balanci
 
 ---
 
-## 📂 Repository Guide & Shared Deliverables
+## Repository Guide & Shared Deliverables
 
 When reviewing this solution, only the following files and directories are shared and should be read to understand the design:
 
@@ -37,12 +37,12 @@ When reviewing this solution, only the following files and directories are share
 
 ---
 
-## 🔗 Repository Reference
+## Repository Reference
 - **GitHub Repository Link**: [https://github.com/ram/multi-agent-fraud-detection](https://github.com/ram/multi-agent-fraud-detection)
 
 ---
 
-## 📝 Developer Prompts (Placeholders)
+## Developer Prompts (Placeholders)
 
 *These sections serve as placeholders for detailed generative prompts which will be added shortly.*
 

@@ -5,7 +5,7 @@ The platform uses a layered multi-agent system split into **Tier 1 (Fast-Path)**
 
 ---
 
-## ⚡ Latency Budget Allocation (100ms Total)
+## Latency Budget Allocation (100ms Total)
 
 To satisfy the payment switch's real-time authorization loop, latency is strictly partitioned:
 
@@ -23,7 +23,7 @@ To satisfy the payment switch's real-time authorization loop, latency is strictl
 
 ---
 
-## 🗺️ Agent Routing & MCP Topology
+## Agent Routing & MCP Topology
 
 ```
 [ Payment Switch ]
@@ -52,7 +52,7 @@ To satisfy the payment switch's real-time authorization loop, latency is strictl
 
 ---
 
-## ⚖️ Governance Constitution
+## Governance Constitution
 
 All actions must comply with our central policies:
 * **no_policy_override**: Governance policies cannot be bypassed by agent logic.
@@ -62,7 +62,7 @@ All actions must comply with our central policies:
 
 ---
 
-## 🔄 Asynchronous Feedback Cluster
+## Asynchronous Feedback Cluster
 
 Decision logs are streamed to **Kafka topics** (`fraud.decisions`, `fraud.audit`, `fraud.chargebacks`, `fraud.analyst-verdicts`). 
 
