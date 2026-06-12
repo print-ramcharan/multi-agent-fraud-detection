@@ -18,26 +18,35 @@ graph LR
 ```
 
 ## Rules Evaluated
-1. **Sanctioned Country Check**: Compares the transaction country against sanctioned territories (`KP`, `IR`, `SY`, `CU`, `SD`). A match raises a **critical** violation (unconditional decline).
-2. **High-Risk Country Check**: Flags transactions from high-risk locations.
-3. **High-Risk Merchant Category**: Flags risky merchant industries (e.g., casinos, crypto exchanges).
-4. **Channel Limit Breaches**: Checks if transaction amount exceeds channel limits:
-   * Online: $10,000
-   * POS: $5,000
-   * ATM: $2,000
-   * Mobile: $10,000
-   * Banking: $50,000
-5. **Suspicious Hour**: Flags transactions occurring during restricted hours (1:00 AM - 5:00 AM UTC).
-6. **Very High Amount**: Flags any transaction above $25,000.
+1. **SANCTIONED_COUNTRY** (Severity: `critical`): Checks if the transaction country code is in `{"KP", "IR", "SY", "CU", "SD"}`.
+2. **HIGH_RISK_COUNTRY** (Severity: `medium`): Triggered if the transaction originates from a high-risk country (`is_high_risk_country` flag is true).
+3. **HIGH_RISK_MERCHANT_CATEGORY** (Severity: `high`): Triggered if the merchant category is flagged as high-risk (`is_high_risk_merchant` flag is true).
+4. **AMOUNT_EXCEEDS_LIMIT** (Severity: `high`): Checks if the transaction amount exceeds the static limit configured for the channel. The limits are:
+   * `online`: $10,000.00
+   * `pos`: $5,000.00
+   * `atm`: $2,000.00
+   * `mobile`: $10,000.00
+   * `banking`: $50,000.00
+   * Any other channel defaults to $10,000.00.
+5. **SUSPICIOUS_TIME** (Severity: `low`): Triggered if the transaction hour falls within the restricted hours of `1, 2, 3, or 4` UTC (1:00 AM to 5:00 AM UTC).
+6. **VERY_HIGH_AMOUNT** (Severity: `high`): Triggered if the transaction amount exceeds the absolute limit of $25,000.00, regardless of the channel.
 
 ## Input Schema (JSON)
 ```json
 {
-  "country": "KP",
+  "transaction_id": "tx-12345",
+  "customer_id": "cust-987",
+  "card_id": "card-456",
+  "device_id": "dev-789",
   "amount_usd": 12500.00,
-  "channel": "online",
+  "currency": "USD",
+  "country": "KP",
+  "merchant_id": "m-555",
   "merchant_category": "casino",
-  "timestamp": 1781268800
+  "channel": "online",
+  "timestamp": "2026-06-12T01:30:00Z",
+  "is_high_risk_country": true,
+  "is_high_risk_merchant": true
 }
 ```
 
@@ -45,18 +54,32 @@ graph LR
 ```json
 {
   "violation": true,
-  "rule_name": "sanctioned_country",
+  "rule_name": "SANCTIONED_COUNTRY",
   "rule_severity": "critical",
   "violations": [
-    "sanctioned_country",
-    "high_risk_merchant_category"
+    {
+      "rule": "SANCTIONED_COUNTRY",
+      "severity": "critical",
+      "description": "Transaction from sanctioned country: KP"
+    },
+    {
+      "rule": "HIGH_RISK_MERCHANT_CATEGORY",
+      "severity": "high",
+      "description": "High-risk merchant category: casino"
+    }
   ],
   "evidence": [
     {
       "source": "rule_agent",
-      "claim": "Transaction country KP is sanctioned. Merchant category is high-risk casino.",
-      "confidence": 1.0
+      "claim": "Country KP is on the sanctions list",
+      "confidence": 1.0,
+      "data": {
+        "country": "KP",
+        "list": "SANCTIONS"
+      }
     }
-  ]
+  ],
+  "_tool_calls_made": 0
 }
 ```
+
